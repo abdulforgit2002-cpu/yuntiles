@@ -53,17 +53,97 @@ const surveyVideos = [
   { title: 'Explore Our Work 03', video: 'https://res.cloudinary.com/djczmay2i/video/upload/v1794405394/yuntiles1_cxnvcn.mp4' },
 ];
 
+const whatsappTranslations = {
+  "Hello YUNTILES DECOR, I would like to enquire about your services.": {
+    sw: "Habari YUNTILES DECOR, ningependa kupata maelezo kuhusu huduma zenu.",
+    ar: "مرحباً YUNTILES DECOR، أود الاستفسار عن خدماتكم."
+  },
+  "Hello YUNTILES DECOR, I have seen your portfolio and would like to discuss a project.": {
+    sw: "Habari YUNTILES DECOR, nimeona kazi zenu kwenye tovuti na ningependa kujadili mradi.",
+    ar: "مرحباً YUNTILES DECOR، لقد اطلعت على أعمالكم وأرغب في مناقشة مشروع."
+  },
+  "Hello YUNTILES DECOR, I would like to discuss a new project and request a consultation.": {
+    sw: "Habari YUNTILES DECOR, ningependa kujadili mradi mpya na kuomba ushauri wenu.",
+    ar: "مرحباً YUNTILES DECOR، أود مناقشة مشروع جديد وطلب استشارة منكم."
+  },
+  "Hello YUNTILES DECOR, I would like to make an enquiry.": {
+    sw: "Habari YUNTILES DECOR, ningependa kuuliza kuhusu huduma zenu.",
+    ar: "مرحباً YUNTILES DECOR، أود إرسال استفسار إليكم."
+  },
+  "Hello YUNTILES DECOR, I would like to chat with your team.": {
+    sw: "Habari YUNTILES DECOR, ningependa kuzungumza na timu yenu.",
+    ar: "مرحباً YUNTILES DECOR، أود التحدث مع فريقكم."
+  }
+};
+
+function getSelectedLanguage() {
+  const supportedLanguages = ['en', 'sw', 'ar'];
+
+  // GTranslate normally stores the selected language in this cookie.
+  const cookie = document.cookie
+    .split(';')
+    .map((item) => item.trim())
+    .find((item) => item.startsWith('googtrans='));
+
+  if (cookie) {
+    const value = decodeURIComponent(cookie.split('=').slice(1).join('='));
+    const language = value.split('/').filter(Boolean).pop();
+
+    if (supportedLanguages.includes(language)) {
+      return language;
+    }
+  }
+
+  // Fallback: check the currently selected GTranslate dropdown.
+  const selector = document.querySelector('.gt_selector');
+
+  if (selector?.value) {
+    const language = selector.value.split('|').pop();
+
+    if (supportedLanguages.includes(language)) {
+      return language;
+    }
+  }
+
+  return 'en';
+}
+
+function getLocalizedWhatsAppMessage(message) {
+  const language = getSelectedLanguage();
+
+  if (language === 'en') {
+    return message;
+  }
+
+  return whatsappTranslations[message]?.[language] || message;
+}
+
 function WhatsAppLink({ children, message, className = '', ...props }) {
+  const defaultMessage =
+    'Hello YUNTILES DECOR, I would like to enquire about your services.';
+
+  const finalMessage = message || defaultMessage;
+
   return (
     <a
-      href={whatsappUrl(
-        message ||
-          'Hello YUNTILES DECOR, I would like to enquire about your services.'
-      )}
+      href={whatsappUrl(getLocalizedWhatsAppMessage(finalMessage))}
       target="_blank"
-      rel="noreferrer"
+      rel="noopener noreferrer"
       className={className}
       {...props}
+      onClick={(event) => {
+        event.preventDefault();
+
+        // Read the selected language again at click time.
+        const localizedMessage =
+          getLocalizedWhatsAppMessage(finalMessage);
+
+        window.open(
+          whatsappUrl(localizedMessage),
+          '_blank',
+          'noopener,noreferrer'
+        );
+      }}
     >
       {children}
     </a>
@@ -428,13 +508,13 @@ function Contact() {
               </span>
             </a>
 
-            <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer">
+            <WhatsAppLink message="Hello YUNTILES DECOR, I would like to chat with your team.">
               <span className="contact-icon"><FaWhatsapp /></span>
               <span>
                 <small>WhatsApp</small>
                 <strong>Chat with our team</strong>
               </span>
-            </a>
+            </WhatsAppLink>
 
             <div className="contact-detail">
               <span className="contact-icon"><FaMapMarkerAlt /></span>
@@ -515,7 +595,7 @@ function Footer() {
         <div className="footer-column">
           <h3>Get In Touch</h3>
           <a href={`tel:${PHONE}`}><FaPhone /> {PHONE}</a>
-          <a href={`https://wa.me/${WHATSAPP}`}><FaWhatsapp /> WhatsApp</a>
+          <WhatsAppLink><FaWhatsapp /> WhatsApp</WhatsAppLink>
           <a href="mailto:info@yuntilesdecor.com">
             <FaEnvelope /> Email Us
           </a>
