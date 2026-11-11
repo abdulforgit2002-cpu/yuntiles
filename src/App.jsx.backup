@@ -1,0 +1,688 @@
+
+import { useEffect, useState } from 'react';
+import {
+  FaArrowRight,
+  FaBars,
+  FaCheck,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaTimes,
+  FaWhatsapp,
+} from 'react-icons/fa';
+
+const PHONE = '+255621332611';
+const WHATSAPP = '255621332611';
+
+const LOGO_URL =
+  'https://res.cloudinary.com/djczmay2i/image/upload/v1794236725/vectorised-86adaefe_bzhhwt.svg';
+
+const whatsappUrl = (message) =>
+  `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
+
+const services = [
+  {
+    number: '01',
+    title: 'Floor Tiling',
+    description:
+      'Beautiful, durable and professionally installed floor tiles for residential and commercial spaces.',
+    image:
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000&q=85',
+  },
+  {
+    number: '02',
+    title: 'Wall Tiling',
+    description:
+      'Elegant wall finishes that bring character, texture and sophistication to your interiors.',
+    image:
+      'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1000&q=85',
+  },
+  {
+    number: '03',
+    title: 'Bathroom Renovation',
+    description:
+      'Transform your bathroom with carefully selected tiles and exceptional installation.',
+    image:
+      'https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1000&q=85',
+  },
+  {
+    number: '04',
+    title: 'Interior Decoration',
+    description:
+      'Thoughtfully designed interior spaces combining beauty, functionality and quality.',
+    image:
+      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1000&q=85',
+  },
+  {
+    number: '05',
+    title: 'Kitchen Finishing',
+    description:
+      'Quality tiling and finishing solutions that give your kitchen a refined appearance.',
+    image:
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&q=85',
+  },
+  {
+    number: '06',
+    title: 'Renovation & Finishing',
+    description:
+      'Professional finishing and renovation solutions for new and existing properties.',
+    image:
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1000&q=85',
+  },
+];
+
+const completedProjects = [
+  {
+    title: 'Contemporary Living Space',
+    category: 'Residential',
+    location: 'Zanzibar',
+    image:
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=85',
+  },
+  {
+    title: 'Luxury Bathroom Finish',
+    category: 'Bathroom',
+    location: 'Zanzibar',
+    image:
+      'https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1200&q=85',
+  },
+  {
+    title: 'Modern Interior Design',
+    category: 'Interior',
+    location: 'Tanzania',
+    image:
+      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=85',
+  },
+  {
+    title: 'Elegant Kitchen Finish',
+    category: 'Residential',
+    location: 'Zanzibar',
+    image:
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=85',
+  },
+  {
+    title: 'Minimalist Interior',
+    category: 'Interior',
+    location: 'Tanzania',
+    image:
+      'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&q=85',
+  },
+  {
+    title: 'Premium Floor Finish',
+    category: 'Residential',
+    location: 'Zanzibar',
+    image:
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&q=85',
+  },
+];
+
+const ongoingProjects = [
+  {
+    title: 'Residential Interior Project',
+    category: 'Residential',
+    location: 'Zanzibar',
+    image:
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=85',
+  },
+  {
+    title: 'Bathroom Installation',
+    category: 'Bathroom',
+    location: 'Tanzania',
+    image:
+      'https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1200&q=85',
+  },
+  {
+    title: 'Interior Finishing Project',
+    category: 'Interior',
+    location: 'Zanzibar',
+    image:
+      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=85',
+  },
+];
+
+function WhatsAppLink({ children, message, className = '', ...props }) {
+  return (
+    <a
+      href={whatsappUrl(
+        message ||
+          'Hello YUNTILES DECOR, I would like to enquire about your services.'
+      )}
+      target="_blank"
+      rel="noreferrer"
+      className={className}
+      {...props}
+    >
+      {children}
+    </a>
+  );
+}
+
+function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const links = [
+    ['Home', '#home'],
+    ['About', '#about'],
+    ['Services', '#services'],
+    ['Projects', '#projects'],
+    ['Contact', '#contact'],
+  ];
+
+  const closeMenu = () => setMenuOpen(false);
+
+  return (
+    <header className="site-header">
+      <div className="container navbar">
+        <a href="#home" className="brand" onClick={closeMenu}>
+          <img src={LOGO_URL} alt="YUNTILES DECOR logo" />
+        </a>
+
+        <button
+          className="menu-toggle"
+          type="button"
+          aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+
+        <nav className={`nav-links ${menuOpen ? 'active' : ''}`}>
+          {links.map(([label, href]) => (
+            <a key={label} href={href} onClick={closeMenu}>
+              {label}
+            </a>
+          ))}
+
+          <WhatsAppLink className="nav-cta">
+            Get a Consultation <FaArrowRight />
+          </WhatsAppLink>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="hero" id="home">
+      <div className="hero-overlay" />
+
+      <div className="container hero-content">
+        <span className="eyebrow hero-eyebrow">
+          Premium Tiling & Interior Solutions
+        </span>
+
+        <h1>
+          Transforming Spaces.
+          <br />
+          <span>Creating Excellence.</span>
+        </h1>
+
+        <p>
+          Transforming spaces through exceptional craftsmanship, premium
+          tiling and elegant interior decoration.
+        </p>
+
+        <div className="hero-actions">
+          <a href="#projects" className="btn btn-gold">
+            Explore Our Work <FaArrowRight />
+          </a>
+
+          <WhatsAppLink className="btn btn-outline">
+            <FaWhatsapp /> Talk to Our Team
+          </WhatsAppLink>
+        </div>
+
+        <div className="hero-bottom">
+          <span>CRAFTSMANSHIP</span>
+          <span className="hero-line" />
+          <span>QUALITY</span>
+          <span className="hero-line" />
+          <span>EXCELLENCE</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Intro() {
+  return (
+    <section className="intro section-padding" id="about">
+      <div className="container intro-grid">
+        <div className="intro-image-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=85"
+            alt="Elegant contemporary interior"
+            className="intro-image"
+          />
+          <div className="intro-image-label">
+            <span>YUNTILES DECOR</span>
+            <strong>Designed with purpose.</strong>
+          </div>
+        </div>
+
+        <div className="intro-content">
+          <span className="eyebrow">Who We Are</span>
+          <h2>
+            Spaces that inspire.
+            <br />
+            Finishes that last.
+          </h2>
+
+          <p>
+            At YUNTILES DECOR, we believe that exceptional spaces begin with
+            attention to detail. We deliver professional tiling and interior
+            decoration solutions that combine craftsmanship, quality
+            materials and thoughtful design.
+          </p>
+
+          <p>
+            From modern residential interiors to commercial spaces, our focus
+            is on delivering beautiful finishes and a professional experience
+            from beginning to completion.
+          </p>
+
+          <div className="intro-points">
+            <span><FaCheck /> Professional craftsmanship</span>
+            <span><FaCheck /> Quality finishing</span>
+            <span><FaCheck /> Attention to detail</span>
+          </div>
+
+          <a href="#services" className="text-link">
+            Discover Our Services <FaArrowRight />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Services() {
+  return (
+    <section className="services section-padding" id="services">
+      <div className="container">
+        <div className="section-heading">
+          <span className="eyebrow">What We Do</span>
+          <h2>Our Expertise</h2>
+          <p>
+            Tailored tiling and interior solutions designed to elevate every
+            space.
+          </p>
+        </div>
+
+        <div className="services-grid">
+          {services.map((service) => (
+            <article className="service-card" key={service.number}>
+              <div className="service-image">
+                <img src={service.image} alt={service.title} loading="lazy" />
+                <span className="service-number">{service.number}</span>
+              </div>
+
+              <div className="service-info">
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
+                <WhatsAppLink
+                  className="service-link"
+                  message={`Hello YUNTILES DECOR, I am interested in your ${service.title} service. Please share more information.`}
+                >
+                  Enquire Now <FaArrowRight />
+                </WhatsAppLink>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Projects() {
+  const [projectType, setProjectType] = useState('completed');
+  const [category, setCategory] = useState('All');
+
+  const projects =
+    projectType === 'completed' ? completedProjects : ongoingProjects;
+
+  const categories = [
+    'All',
+    ...new Set(projects.map((project) => project.category)),
+  ];
+
+  const filteredProjects =
+    category === 'All'
+      ? projects
+      : projects.filter((project) => project.category === category);
+
+  const changeProjectType = (type) => {
+    setProjectType(type);
+    setCategory('All');
+  };
+
+  return (
+    <section className="projects section-padding" id="projects">
+      <div className="container">
+        <div className="section-heading">
+          <span className="eyebrow">Our Portfolio</span>
+          <h2>Spaces We've Transformed</h2>
+          <p>
+            Explore our project gallery and discover the quality behind our
+            work.
+          </p>
+        </div>
+
+        <div className="project-tabs">
+          <button
+            type="button"
+            className={projectType === 'completed' ? 'active' : ''}
+            onClick={() => changeProjectType('completed')}
+          >
+            Completed Projects
+          </button>
+
+          <button
+            type="button"
+            className={projectType === 'ongoing' ? 'active' : ''}
+            onClick={() => changeProjectType('ongoing')}
+          >
+            Ongoing Projects
+          </button>
+        </div>
+
+        <div className="project-filters">
+          {categories.map((item) => (
+            <button
+              type="button"
+              key={item}
+              className={category === item ? 'active' : ''}
+              onClick={() => setCategory(item)}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+
+        <div className="project-grid">
+          {filteredProjects.map((project, index) => (
+            <article className="project-card" key={`${project.title}-${index}`}>
+              <div className="project-image">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  loading="lazy"
+                />
+                <span className="project-category">{project.category}</span>
+                <div className="project-overlay">
+                  <span>YUNTILES DECOR</span>
+                  <h3>{project.title}</h3>
+                  <p><FaMapMarkerAlt /> {project.location}</p>
+                </div>
+              </div>
+              <div className="project-caption">
+                <div>
+                  <h3>{project.title}</h3>
+                  <span>{project.location}</span>
+                </div>
+                <FaArrowRight />
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="projects-cta">
+          <p>Have a project in mind? Let's bring your vision to life.</p>
+          <WhatsAppLink className="btn btn-dark">
+            Discuss Your Project <FaArrowRight />
+          </WhatsAppLink>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WhyChooseUs() {
+  const reasons = [
+    {
+      number: '01',
+      title: 'Quality Craftsmanship',
+      description:
+        'We pay close attention to detail to deliver clean, professional finishes.',
+    },
+    {
+      number: '02',
+      title: 'Thoughtful Design',
+      description:
+        'We focus on creating spaces that balance visual appeal and practicality.',
+    },
+    {
+      number: '03',
+      title: 'Reliable Service',
+      description:
+        'We value clear communication, professionalism and customer satisfaction.',
+    },
+    {
+      number: '04',
+      title: 'Lasting Results',
+      description:
+        'We aim for durable, carefully executed finishes that stand the test of time.',
+    },
+  ];
+
+  return (
+    <section className="why-us section-padding">
+      <div className="container why-grid">
+        <div className="why-content">
+          <span className="eyebrow">The YUNTILES Difference</span>
+          <h2>More than a finish. It's a standard of excellence.</h2>
+          <p>
+            Every detail matters. We bring together skilled workmanship,
+            thoughtful execution and a commitment to quality to help create
+            spaces you will love.
+          </p>
+
+          <WhatsAppLink className="btn btn-gold">
+            Work With Us <FaArrowRight />
+          </WhatsAppLink>
+        </div>
+
+        <div className="reasons-grid">
+          {reasons.map((reason) => (
+            <article className="reason-card" key={reason.number}>
+              <span>{reason.number}</span>
+              <h3>{reason.title}</h3>
+              <p>{reason.description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Contact() {
+  return (
+    <section className="contact section-padding" id="contact">
+      <div className="container contact-grid">
+        <div className="contact-content">
+          <span className="eyebrow">Let's Talk About Your Project</span>
+          <h2>Ready to transform your space?</h2>
+          <p>
+            Whether you are planning a new project or renovating an existing
+            space, we would be happy to discuss your ideas and requirements.
+          </p>
+
+          <div className="contact-details">
+            <a href={`tel:${PHONE}`}>
+              <span className="contact-icon"><FaPhone /></span>
+              <span>
+                <small>Call Us</small>
+                <strong>{PHONE}</strong>
+              </span>
+            </a>
+
+            <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer">
+              <span className="contact-icon"><FaWhatsapp /></span>
+              <span>
+                <small>WhatsApp</small>
+                <strong>Chat with our team</strong>
+              </span>
+            </a>
+
+            <div className="contact-detail">
+              <span className="contact-icon"><FaMapMarkerAlt /></span>
+              <span>
+                <small>Service Location</small>
+                <strong>Zanzibar, Tanzania</strong>
+              </span>
+            </div>
+
+            <a href="mailto:info@yuntilesdecor.com">
+              <span className="contact-icon"><FaEnvelope /></span>
+              <span>
+                <small>Email</small>
+                <strong>info@yuntilesdecor.com</strong>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <div className="contact-card">
+          <span className="eyebrow">Start Your Journey</span>
+          <h3>Let's create something exceptional.</h3>
+          <p>
+            Tell us what you have in mind. Our team is ready to help you take
+            the next step.
+          </p>
+
+          <WhatsAppLink
+            className="btn btn-gold contact-button"
+            message="Hello YUNTILES DECOR, I would like to discuss a new project and request a consultation."
+          >
+            <FaWhatsapp /> Request a Consultation
+          </WhatsAppLink>
+
+          <div className="contact-card-note">
+            <FaCheck /> Direct communication with our team
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="site-footer">
+      <div className="container footer-main">
+        <div className="footer-brand-column">
+          <a href="#home" className="footer-logo">
+            <img src={LOGO_URL} alt="YUNTILES DECOR" />
+          </a>
+          <p>
+            Premium tiling and interior solutions, delivered with exceptional
+            craftsmanship and attention to detail.
+          </p>
+
+          <WhatsAppLink className="footer-whatsapp">
+            <FaWhatsapp /> Connect on WhatsApp
+          </WhatsAppLink>
+        </div>
+
+        <div className="footer-column">
+          <h3>Quick Links</h3>
+          <a href="#home">Home</a>
+          <a href="#about">About Us</a>
+          <a href="#services">Our Services</a>
+          <a href="#projects">Our Projects</a>
+          <a href="#contact">Contact</a>
+        </div>
+
+        <div className="footer-column">
+          <h3>Our Services</h3>
+          <a href="#services">Floor Tiling</a>
+          <a href="#services">Wall Tiling</a>
+          <a href="#services">Bathroom Renovation</a>
+          <a href="#services">Interior Decoration</a>
+          <a href="#services">Renovation & Finishing</a>
+        </div>
+
+        <div className="footer-column">
+          <h3>Get In Touch</h3>
+          <a href={`tel:${PHONE}`}><FaPhone /> {PHONE}</a>
+          <a href={`https://wa.me/${WHATSAPP}`}><FaWhatsapp /> WhatsApp</a>
+          <a href="mailto:info@yuntilesdecor.com">
+            <FaEnvelope /> Email Us
+          </a>
+          <span><FaMapMarkerAlt /> Zanzibar, Tanzania</span>
+        </div>
+      </div>
+
+      <div className="footer-bottom">
+        <div className="container footer-bottom-inner">
+          <p>© {new Date().getFullYear()} YUNTILES DECOR. All rights reserved.</p>
+          <p>Premium Tiling & Interior Solutions</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FloatingWhatsApp() {
+  return (
+    <WhatsAppLink
+      className="floating-whatsapp"
+      aria-label="Chat with YUNTILES DECOR on WhatsApp"
+      message="Hello YUNTILES DECOR, I would like to make an enquiry."
+    >
+      <FaWhatsapp />
+      <span>Chat with us</span>
+    </WhatsAppLink>
+  );
+}
+
+function GoogleTranslate() {
+  useEffect(() => {
+    window.gtranslateSettings = {
+      default_language: 'en',
+      languages: ['en', 'sw', 'ar'],
+      wrapper_selector: '.gtranslate_wrapper',
+      switcher_horizontal_position: 'inline',
+      switcher_vertical_position: 'top',
+      float_switcher_open_direction: 'bottom',
+    };
+
+    const existingScript = document.getElementById('gtranslate-script');
+
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.id = 'gtranslate-script';
+      script.src =
+        'https://cdn.gtranslate.net/widgets/latest/float.js';
+      script.defer = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  return <div className="gtranslate_wrapper" />;
+}
+
+function App() {
+  return (
+    <>
+      <Navbar />
+      <main>
+        <Hero />
+        <Intro />
+        <Services />
+        <Projects />
+        <WhyChooseUs />
+        <Contact />
+      </main>
+      <Footer />
+      <FloatingWhatsApp />
+      <GoogleTranslate />
+    </>
+  );
+}
+
+export default App;
